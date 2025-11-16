@@ -1,0 +1,38 @@
+﻿@model List<Mood_Music.Models.Favorite>
+
+@{
+    ViewData["Title"] = "Favorites";
+}
+
+<header class="header">
+    <h1 id="title">Your Favorites ❤️</h1>
+</header>
+
+@if (Model == null || !Model.Any())
+{
+    <p class="empty-message">No favorites saved yet.</p>
+}
+else
+{
+    <ul class="favorites-list">
+        @foreach (var item in Model)
+        {
+            <li class="favorite-item">
+                <h3>@item.Title</h3> by @item.Artist<br />
+                <p>@item.Album</p><br />
+                @if (!string.IsNullOrEmpty(item.PreviewUrl))
+                {
+                    <audio controls class="favorite-audio">
+                        <source src="@item.PreviewUrl" type="audio/mpeg" />
+                    </audio>
+                    <form method="post" asp-controller="Favorites" asp-action="Remove">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="remove-button">🗑 Remove</button>
+                    </form>
+
+                }
+            </li>
+        }
+    </ul>
+}

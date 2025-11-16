@@ -1,0 +1,55 @@
+﻿@model List<Mood_Music.Models.Track>
+@{
+    ViewData["Title"] = "Discover Music";
+}
+
+<header class="header">
+    <h1 id="title">Discover Music 🎧</h1>
+</header>
+
+
+<div class="search-container">
+    <form method="get" asp-controller="Discover" asp-action="Index" class="search-form">
+        <input type="text" name="mood" placeholder="Search for an artist or song..." class="search-input" />
+        <button type="submit" class="search-button">Search</button>
+    </form>
+</div>
+
+<div class="discover-container">
+    @if (Model == null || !Model.Any())
+    {
+        <p class="no-results">No tracks found. Try another mood!</p>
+    }
+    else
+    {
+        <div class="track-grid">
+            @foreach (var track in Model)
+            {
+                <div class="track-card">
+                    <img src="@track.ArtworkUrl" alt="Album Cover" class="track-image" />
+
+                    <div class="track-info">
+                        <h3>@track.Title</h3>
+                        <p>@track.Artist</p>
+                        <p><em>@track.Album</em></p>
+                    </div>
+
+                    <audio controls class="audio-player">
+                        <source src="@track.PreviewUrl" type="audio/mpeg" />
+                        Your browser does not support audio.
+                    </audio>
+
+                    <form asp-controller="Favorites" asp-action="Add" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Title" value="@track.Title" />
+                        <input type="hidden" name="Artist" value="@track.Artist" />
+                        <input type="hidden" name="Album" value="@track.Album" />
+                        <input type="hidden" name="PreviewUrl" value="@track.PreviewUrl" />
+                        <input type="hidden" name="ArtworkUrl" value="@track.ArtworkUrl" />
+                        <button type="submit" class="save-button">❤️ Save</button>
+                    </form>
+                </div>
+            }
+        </div>
+    }
+</div>
